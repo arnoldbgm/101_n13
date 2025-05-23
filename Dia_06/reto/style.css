@@ -1,0 +1,31 @@
+/*
+   NORMALIZAR
+*/
+
+* {
+   margin: 0;
+   padding: 0;
+}
+
+main {
+   border: 1px solid red;
+}
+
+#imagen {
+   border-radius: 12px 12px 0 0;
+   height: 250px;
+   background-image: url("images/image-product-mobile.jpg");
+   background-size: cover;
+   background-repeat: no-repeat;
+}
+
+main > section {
+   padding: 24px;
+}
+
+section > h1{
+   font-size: 12px;
+   /*Convertir un texto a mayuscula*/
+   text-transform: uppercase;
+   letter-spacing: 8px;
+}
