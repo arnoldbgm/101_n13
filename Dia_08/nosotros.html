@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Nosotros - GameHub</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <style>
+      .hero-about {
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .team-card {
+         transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .team-card:hover {
+         transform: translateY(-10px);
+         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .value-card {
+         background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+         transition: transform 0.3s ease;
+      }
+
+      .value-card:hover {
+         transform: translateY(-5px);
+      }
+
+      .timeline-item {
+         position: relative;
+      }
+
+      .timeline-item::before {
+         content: '';
+         position: absolute;
+         left: 1rem;
+         top: 3rem;
+         bottom: -1rem;
+         width: 2px;
+         background: linear-gradient(to bottom, #667eea, #764ba2);
+      }
+
+      .timeline-item:last-child::before {
+         display: none;
+      }
+
+      .stat-number {
+         background: linear-gradient(45deg, #667eea, #764ba2);
+         -webkit-background-clip: text;
+         -webkit-text-fill-color: transparent;
+         background-clip: text;
+      }
+   </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+   <!-- Barra de Navegación -->
+   <nav class="bg-gray-800 shadow-lg sticky top-0 z-50">
+      <div class="container mx-auto px-4">
+         <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+               <i class="fas fa-gamepad text-3xl text-purple-500"></i>
+               <span class="text-2xl font-bold text-white">GameHub</span>
+            </div>
+
+            <!-- Navegación Desktop -->
+            <div class="hidden md:flex items-center space-x-8">
+               <a href="index.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Inicio</a>
+               <a href="catalogo.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Catálogo</a>
+               <a href="#" class="text-purple-400 font-semibold border-b-2 border-purple-400">Nosotros</a>
+               <a href="contacto.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Contacto</a>
+            </div>
+
+            <!-- Carrito y Menú Mobile -->
+            <div class="flex items-center space-x-4">
+               <a href="carrito.html" class="relative">
+                  <i
+                     class="fas fa-shopping-cart text-2xl text-purple-400 hover:text-purple-300 transition duration-300"></i>
+                  <span
+                     class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                     id="cart-count">0</span>
+               </a>
+               <button class="md:hidden text-white" id="mobile-menu-btn">
+                  <i class="fas fa-bars text-xl"></i>
+               </button>
+            </div>
+         </div>
+
+         <!-- Menú Mobile -->
+         <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 bg-gray-700">
+               <a href="index.html" class="block px-3 py-2 text-gray-300 hover:text-purple-400">Inicio</a>
+               <a href="catalogo.html" class="block px-3 py-2 text-gray-300 hover:text-purple-400">Catálogo</a>
+               <a href="#" class="block px-3 py-2 text-purple-400 font-semibold">Nosotros</a>
+               <a href="contacto.html" class="block px-3 py-2 text-gray-300 hover:text-purple-400">Contacto</a>
+            </div>
+         </div>
+      </div>
+   </nav>
+
+   <!-- Hero Section -->
+   <section class="hero-about py-16">
+      <div class="container mx-auto px-4">
+         <div class="text-center max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">
+               <i class="fas fa-users mr-4"></i>
+               Sobre GameHub
+            </h1>
+            <p class="text-xl text-gray-200 mb-8">
+               Somos una empresa colombiana apasionada por los videojuegos, dedicada a brindar
+               las mejores experiencias gaming a nuestros clientes desde 2020.
+            </p>
+            <div class="flex justify-center space-x-8 text-lg">
+               <div class="text-center">
+                  <div class="stat-number text-3xl font-bold">4+</div>
+                  <p>Años de experiencia</p>
+               </div>
+               <div class="text-center">
+                  <div class="stat-number text-3xl font-bold">10K+</div>
+                  <p>Clientes satisfechos</p>
+               </div>
+               <div class="text-center">
+                  <div class="stat-number text-3xl font-bold">500+</div>
+                  <p>Juegos disponibles</p>
+               </div>
+            </div>
+         </div>
+      </div>
+   </section>
+
+   <!-- Nuestra Historia -->
+   <section class="py-16 bg-gray-800">
+      <div class="container mx-auto px-4">
+         <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">
+               <i class="fas fa-book text-purple-400 mr-3"></i>
+               Nuestra Historia
+            </h2>
+
+            <div class="bg-gray-700 rounded-2xl p-8 mb-12">
+               <p class="text-lg text-gray-300 leading-relaxed mb-6">
+                  GameHub nació en 2020 de la pasión de un grupo de gamers colombianos que querían
+                  crear un espacio donde los videojuegos fueran más que entretenimiento: una forma
+                  de conectar personas y crear comunidades.
+               </p>
+               <p class="text-lg text-gray-300 leading-relaxed mb-6">
+                  Comenzamos como una pequeña tienda online desde Bogotá, pero nuestra visión siempre
+                  fue grande: convertirnos en la tienda de videojuegos más confiable y completa de Colombia,
+                  ofreciendo no solo productos de calidad, sino también un servicio excepcional que haga
+                  que cada compra sea una experiencia memorable.
+               </p>
+               <p class="text-lg text-gray-300 leading-relaxed">
+                  Hoy, después de más de 4 años, hemos crecido hasta convertirnos en una referencia
+                  en el mercado gaming colombiano, sirviendo a más de 10,000 gamers satisfechos y
+                  expandiendo constantemente nuestro catálogo con los últimos lanzamientos y clásicos
+                  atemporales.
+               </p>
+            </div>
+
+            <!-- Timeline -->
+            <div class="space-y-8">
+               <div class="timeline-item flex items-start space-x-4">
+                  <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 mt-2">
+                     <i class="fas fa-rocket text-sm text-white"></i>
+                  </div>
+                  <div>
+                     <h3 class="text-xl font-semibold text-purple-400 mb-2">2020 - Fundación</h3>
+                     <p class="text-gray-300">Inicio de GameHub como tienda online con 50 títulos disponibles</p>
+                  </div>
+               </div>
+
+               <div class="timeline-item flex items-start space-x-4">
+                  <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0 mt-2">
+                     <i class="fas fa-trophy text-sm text-white"></i>
+                  </div>
+                  <div>
+                     <h3 class="text-xl font-semibold text-green-400 mb-2">2021 - Primer año de éxito</h3>
+                     <p class="text-gray-300">Alcanzamos 1,000 clientes y expandimos a 200 títulos</p>
+                  </div>
+               </div>
+
+               <div class="timeline-item flex items-start space-x-4">
+                  <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-2">
+                     <i class="fas fa-users text-sm text-white"></i>
+                  </div>
+                  <div>
+                     <h3 class="text-xl font-semibold text-blue-400 mb-2">2022 - Crecimiento del equipo</h3>
+                     <p class="text-gray-300">Contratamos más personal y mejoramos nuestro servicio al cliente</p>
+                  </div>
+               </div>
+
+               <div class="timeline-item flex items-start space-x-4">
+                  <div class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center flex-shrink-0 mt-2">
+                     <i class="fas fa-star text-sm text-white"></i>
+                  </div>
+                  <div>
+                     <h3 class="text-xl font-semibold text-yellow-400 mb-2">2023 - Reconocimiento</h3>
+                     <p class="text-gray-300">Fuimos reconocidos como "Mejor Tienda Gaming Online de Colombia"</p>
+                  </div>
+               </div>
+
+               <div class="timeline-item flex items-start space-x-4">
+                  <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0 mt-2">
+                     <i class="fas fa-heart text-sm text-white"></i>
+                  </div>
+                  <div>
+                     <h3 class="text-xl font-semibold text-red-400 mb-2">2024 - Expansión continua</h3>
+                     <p class="text-gray-300">Más de 10,000 clientes satisfechos y 500+ juegos en catálogo</p>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </section>
+
+   <!-- Nuestros Valores -->
+   <section class="py-16">
+      <div class="container mx-auto px-4">
+         <h2 class="text-3xl font-bold text-center mb-12">
+            <i class="fas fa-gem text-purple-400 mr-3"></i>
+            Nuestros Valores
+         </h2>
+
+         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div class="value-card rounded-2xl p-8 text-center">
+               <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <i class="fas fa-heart text-2xl text-white"></i>
+               </div>
+               <h3 class="text-xl font-bold mb-4 text-purple-400">Pasión por el Gaming</h3>
+               <p class="text-gray-300">
+                  Somos gamers auténticos que entienden lo que realmente importa
+                  en el mundo de los videojuegos.
+               </p>
+            </div>
+
+            <div class="value-card rounded-2xl p-8 text-center">
+               <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <i class="fas fa-shield-alt text-2xl text-white"></i>
+               </div>
+               <h3 class="text-xl font-bold mb-4 text-green-400">Confianza y Seguridad</h3>
+               <p class="text-gray-300">
+                  Garantizamos transacciones seguras y productos auténticos
+                  para una experiencia de compra sin preocupaciones.
+               </p>
+            </div>
+
+            <div class="value-card rounded-2xl p-8 text-center">
+               <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <i class="fas fa-handshake text-2xl text-white"></i>
+               </div>
+               <h3 class="text-xl font-bold mb-4 text-blue-400">Servicio Excepcional</h3>
+               <p class="text-gray-300">
+                  Nuestro equipo está siempre disponible para brindar
+                  la mejor atención y soporte a nuestros clientes.
+               </p>
+            </div>
+
+            <div class="value-card rounded-2xl p-8 text-center">
+               <div class="w-16 h-16 bg-yellow-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <i class="fas fa-rocket text-2xl text-white"></i>
+               </div>
+               <h3 class="text-xl font-bold mb-4 text-yellow-400">Innovación Constante</h3>
+               <p class="text-gray-300">
+                  Siempre buscamos nuevas formas de mejorar y ofrecer
+                  las últimas tendencias del mercado gaming.
+               </p>
+            </div>
+
+            <div class="value-card rounded-2xl p-8 text-center">
+               <div class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <i class="fas fa-users text-2xl text-white"></i>
+               </div>
+               <h3 class="text-xl font-bold mb-4 text-red-400">Comunidad Gaming</h3>
+               <p class="text-gray-300">
+                  Fomentamos la creación de una comunidad unida
+                  de gamers en toda Colombia.
+               </p>
+            </div>
+
+            <div class="value-card rounded-2xl p-8 text-center">
+               <div class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <i class="fas fa-award text-2xl text-white"></i>
+               </div>
+               <h3 class="text-xl font-bold mb-4 text-indigo-400">Calidad Premium</h3>
+               <p class="text-gray-300">
+                  Solo ofrecemos productos de la más alta calidad
+                  de desarrolladores y distribuidores confiables.
+               </p>
+            </div>
+         </div>
+      </div>
+   </section>
+
+   <!-- Nuestro Equipo -->
+   <section class="py-16 bg-gray-800">
+      <div class="container mx-auto px-4">
+         <h2 class="text-3xl font-bold text-center mb-12">
+            <i class="fas fa-users text-purple-400 mr-3"></i>
+            Conoce Nuestro Equipo
+         </h2>
+
+         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div class="team-card bg-gray-700 rounded-2xl p-8 text-center">
+               <div
+                  class="w-24 h-24 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <i class="fas fa-user text-3xl text-white"></i>
+               </div>
+               <h3 class="text-xl font-bold mb-2 text-white">Carlos Mendoza</h3>
+               <p class="text-purple-400 mb-4">CEO & Fundador</p>
+               <p class="text-gray-300 text-sm">
+                  Gamer desde los 8 años, apasionado por crear experiencias
+                  únicas para la comunidad gaming colombiana.
+               </p>
+            </div>
+
+            <div class="team-card bg-gray-700 rounded-2xl p-8 text-center">
+               <div
+                  class="w-24 h-24 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <i class="fas fa-user text-3xl text-white"></i>
+               </div>
+               <h3 class="text-xl font-bold mb-2 text-white">Ana Rodriguez</h3>
+               <p class="text-green-400 mb-4">Directora de Marketing</p>
+               <p class="text-gray-300 text-sm">
+                  Especialista en marketing digital con más de 6 años
+                  de experiencia en la industria del entretenimiento.
+               </p>
+            </div>
+
+            <div class="team-card bg-gray-700 rounded-2xl p-8 text-center">
+               <div
+                  class="w-24 h-24 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <i class="fas fa-user text-3xl text-white"></i>
+               </div>
+               <h3 class="text-xl font-bold mb-2 text-white">Miguel Torres</h3>
+               <p class="text-orange-400 mb-4">Jefe de Soporte Técnico</p>
+               <p class="text-gray-300 text-sm">
+                  Ingeniero de sistemas y gamer hardcore, experto en
+                  resolver cualquier problema técnico que puedas tener.
+               </p>
+            </div>
+         </div>
+      </div>
+   </section>
+
+   <!-- Nuestra Misión y Visión -->
+   <section class="py-16">
+      <div class="container mx-auto px-4">
+         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            <div class="bg-gray-800 rounded-2xl p-8">
+               <div class="flex items-center mb-6">
+                  <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mr-4">
+                     <i class="fas fa-bullseye text-xl text-white"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-purple-400">Nuestra Misión</h3>
+               </div>
+               <p class="text-gray-300 text-lg leading-relaxed">
+                  Proporcionar a los gamers colombianos acceso fácil y confiable a los mejores
+                  videojuegos del mercado, creando una comunidad donde la pasión por el gaming
+                  sea el centro de cada experiencia, mientras ofrecemos un servicio excepcional
+                  que supere las expectativas de nuestros clientes.
+               </p>
+            </div>
+
+            <div class="bg-gray-800 rounded-2xl p-8">
+               <div class="flex items-center mb-6">
+                  <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mr-4">
+                     <i class="fas fa-eye text-xl text-white"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-blue-400">Nuestra Visión</h3>
+               </div>
+               <p class="text-gray-300 text-lg leading-relaxed">
+                  Ser reconocidos como la tienda de videojuegos líder en Colombia, expandiendo
+                  nuestro alcance a toda Latinoamérica, siendo el punto de referencia para
+                  gamers que buscan calidad, variedad y una experiencia de compra excepcional
+                  en el mundo de los videojuegos.
+               </p>
+            </div>
+         </div>
+      </div>
+   </section>
+
+   <!-- Llamada a la acción -->
+   <section class="py-16 bg-gradient-to-r from-purple-900 to-blue-900">
+      <div class="container mx-auto px-4 text-center">
+         <h2 class="text-3xl font-bold mb-6">¿Listo para unirte a nuestra comunidad?</h2>
+         <p class="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
+            Descubre por qué miles de gamers colombianos confían en GameHub
+            para sus compras de videojuegos.
+         </p>
+         <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="catalogo.html"
+               class="bg-white text-purple-900 px-8 py-3 rounded-lg font-bold text-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+               <i class="fas fa-gamepad mr-2"></i>
+               Explorar Catálogo
+            </a>
+            <a href="contacto.html"
+               class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-white hover:text-purple-900 transition duration-300">
+               <i class="fas fa-envelope mr-2"></i>
+               Contáctanos
+            </a>
+         </div>
+      </div>
+   </section>
+
+   <!-- Footer -->
+   <footer class="bg-gray-900 border-t border-gray-700 py-12">
+      <div class="container mx-auto px-4">
+         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Logo y descripción -->
+            <div class="md:col-span-2">
+               <div class="flex items-center space-x-2 mb-4">
+                  <i class="fas fa-gamepad text-3xl text-purple-500"></i>
+                  <span class="text-2xl font-bold">GameHub</span>
+               </div>
+               <p class="text-gray-400 mb-6">Tu tienda de videojuegos de confianza. Los mejores juegos, las mejores
+                  ofertas, la mejor atención.</p>
+               <div class="flex items-center space-x-4">
+                  <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                     <i class="fab fa-facebook"></i>
+                  </a>
+                  <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                     <i class="fab fa-twitter"></i>
+                  </a>
+                  <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                     <i class="fab fa-instagram"></i>
+                  </a>
+                  <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                     <i class="fab fa-discord"></i>
+                  </a>
+               </div>
+            </div>
+
+            <!-- Enlaces rápidos -->
+            <div>
+               <h3 class="text-lg font-semibold mb-4">Enlaces Rápidos</h3>
+               <ul class="space-y-2">
+                  <li><a href="index.html"
+                        class="text-gray-400 hover:text-purple-400 transition duration-300">Inicio</a></li>
+                  <li><a href="catalogo.html"
+                        class="text-gray-400 hover:text-purple-400 transition duration-300">Catálogo</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-purple-400 transition duration-300">Nosotros</a></li>
+                  <li><a href="contacto.html"
+                        class="text-gray-400 hover:text-purple-400 transition duration-300">Contacto</a></li>
+               </ul>
+            </div>
+
+            <!-- Información de contacto -->
+            <div>
+               <h3 class="text-lg font-semibold mb-4">Contacto</h3>
+               <ul class="space-y-2 text-gray-400">
+                  <li><i class="fas fa-phone mr-2"></i> +57 123 456 7890</li>
+                  <li><i class="fas fa-envelope mr-2"></i> info@gamehub.com</li>
+                  <li><i class="fas fa-map-marker-alt mr-2"></i> Bogotá, Colombia</li>
+               </ul>
+            </div>
+         </div>
+
+         <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 GameHub. Todos los derechos reservados.</p>
+         </div>
+      </div>
+   </footer>
+
+   <script>
+      // Menú mobile
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      mobileMenuBtn.addEventListener('click', () => {
+         mobileMenu.classList.toggle('hidden');
+      });
+
+      // Cerrar menú al hacer click en un enlace
+      mobileMenu.querySelectorAll('a').forEach(link => {
+         link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+         });
+      });
+
+      // Simular carrito con algunos items
+      document.addEventListener('DOMContentLoaded', () => {
+         document.getElementById('cart-count').textContent = '3';
+      });
+
+      // Animación de contadores al hacer scroll
+      function animateCounters() {
+         const counters = document.querySelectorAll('.stat-number');
+
+         const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+               if (entry.isIntersecting) {
+                  const counter = entry.target;
+                  const target = counter.textContent.replace(/\D/g, '');
+                  const suffix = counter.textContent.replace(/\d/g, '');
+                  let current = 0;
+                  const increment = target / 50;
+
+                  const timer = setInterval(() => {
+                     current += increment;
+                     if (current >= target) {
+                        counter.textContent = target + suffix;
+                        clearInterval(timer);
+                     } else {
+                        counter.textContent = Math.floor(current) + suffix;
+                     }
+                  }, 30);
+
+                  observer.unobserve(counter);
+               }
+            });
+         });
+
+         counters.forEach(counter => observer.observe(counter));
+      }
+
+      // Inicializar animaciones
+      document.addEventListener('DOMContentLoaded', () => {
+         animateCounters();
+      });
+
+      // Smooth scroll para la navegación interna
+      function smoothScroll() {
+         const links = document.querySelectorAll('a[href^="#"]');
+
+         links.forEach(link => {
+            link.addEventListener('click', (e) => {
+               e.preventDefault();
+               const target = document.querySelector(link.getAttribute('href'));
+               if (target) {
+                  target.scrollIntoView({
+                     behavior: 'smooth',
+                     block: 'start'
+                  });
+               }
+            });
+         });
+      }
+
+      smoothScroll();
+   </script>
+</body>
+
+</html>

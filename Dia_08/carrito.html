@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras - GameHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .cart-item {
+            transition: all 0.3s ease;
+        }
+        .cart-item:hover {
+            background-color: rgba(55, 65, 81, 0.5);
+        }
+        .quantity-btn {
+            transition: all 0.2s ease;
+        }
+        .quantity-btn:hover {
+            transform: scale(1.1);
+        }
+        .price-tag {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+        .total-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .empty-cart {
+            background: linear-gradient(135deg, #434343 0%, #000000 100%);
+        }
+        .checkout-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        .remove-btn {
+            transition: all 0.3s ease;
+        }
+        .remove-btn:hover {
+            background-color: #dc2626;
+            transform: scale(1.05);
+        }
+        .fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Barra de Navegación -->
+    <nav class="bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-gamepad text-3xl text-purple-500"></i>
+                    <span class="text-2xl font-bold text-white">GameHub</span>
+                </div>
+                
+                <!-- Navegación Desktop -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Inicio</a>
+                    <a href="catalogo.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Catálogo</a>
+                    <a href="nosotros.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Nosotros</a>
+                    <a href="contacto.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Contacto</a>
+                </div>
+                
+                <!-- Carrito y Menú Mobile -->
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="relative">
+                        <i class="fas fa-shopping-cart text-2xl text-purple-400"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" id="cart-count">0</span>
+                    </a>
+                    <button class="md:hidden text-white" id="mobile-menu-btn">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Menú Mobile -->
+            <div class="md:hidden hidden" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1 bg-gray-700">
+                    <a href="index.html" class="block px-3 py-2 text-gray-300 hover:text-purple-400">Inicio</a>
+                    <a href="catalogo.html" class="block px-3 py-2 text-gray-300 hover:text-purple-400">Catálogo</a>
+                    <a href="nosotros.html" class="block px-3 py-2 text-gray-300 hover:text-purple-400">Nosotros</a>
+                    <a href="contacto.html" class="block px-3 py-2 text-gray-300 hover:text-purple-400">Contacto</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header de la página -->
+    <section class="bg-gradient-to-r from-purple-900 to-blue-900 py-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    <i class="fas fa-shopping-cart mr-4"></i>
+                    Mi Carrito
+                </h1>
+                <p class="text-xl text-gray-200">Revisa y gestiona tus productos seleccionados</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenido Principal -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <!-- Carrito con productos -->
+            <div id="cart-content" class="hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Lista de productos -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                            <div class="bg-gray-700 px-6 py-4 border-b border-gray-600">
+                                <h2 class="text-2xl font-semibold flex items-center">
+                                    <i class="fas fa-list mr-3 text-purple-400"></i>
+                                    Productos en tu carrito
+                                </h2>
+                            </div>
+                            
+                            <!-- Items del carrito -->
+                            <div id="cart-items" class="divide-y divide-gray-700">
+                                <!-- Los items se cargarán dinámicamente aquí -->
+                            </div>
+                        </div>
+                        
+                        <!-- Botones de acción -->
+                        <div class="mt-6 flex flex-col sm:flex-row gap-4">
+                            <button id="clear-cart" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 flex items-center justify-center">
+                                <i class="fas fa-trash mr-2"></i>
+                                Vaciar Carrito
+                            </button>
+                            <a href="catalogo.html" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 flex items-center justify-center text-center">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Seguir Comprando
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Resumen del pedido -->
+                    <div class="lg:col-span-1">
+                        <div class="total-card rounded-lg shadow-lg p-6 text-white sticky top-24">
+                            <h3 class="text-2xl font-bold mb-6 flex items-center">
+                                <i class="fas fa-calculator mr-3"></i>
+                                Resumen del Pedido
+                            </h3>
+                            
+                            <div class="space-y-4 mb-6">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-200">Subtotal:</span>
+                                    <span class="font-semibold" id="subtotal">$0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-200">Envío:</span>
+                                    <span class="font-semibold" id="shipping">GRATIS</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-200">Descuento:</span>
+                                    <span class="font-semibold text-green-400" id="discount">-$0</span>
+                                </div>
+                                <hr class="border-gray-300 border-opacity-30">
+                                <div class="flex justify-between items-center text-xl">
+                                    <span class="font-bold">Total:</span>
+                                    <span class="font-bold" id="total">$0</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Código de descuento -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-2">Código de descuento:</label>
+                                <div class="flex">
+                                    <input 
+                                        type="text" 
+                                        placeholder="Ingresa tu código"
+                                        class="flex-1 px-3 py-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-l-lg text-white placeholder-gray-300 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+                                        id="discount-code"
+                                    >
+                                    <button class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-r-lg transition" id="apply-discount">
+                                        Aplicar
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <button class="checkout-btn w-full text-white px-6 py-4 rounded-lg font-bold text-lg transition duration-300 flex items-center justify-center">
+                                <i class="fas fa-credit-card mr-3"></i>
+                                Finalizar Compra
+                            </button>
+                            
+                            <div class="mt-4 text-center text-sm text-gray-200">
+                                <i class="fas fa-shield-alt mr-1"></i>
+                                Compra 100% segura
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carrito vacío -->
+            <div id="empty-cart" class="text-center py-16">
+                <div class="empty-cart rounded-2xl p-12 max-w-2xl mx-auto">
+                    <i class="fas fa-shopping-cart text-8xl text-gray-600 mb-8">
+                        <i class="fas fa-times text-3xl text-red-500 absolute ml-12 -mt-4"></i>
+                    </i>
+                    <h2 class="text-3xl font-bold mb-4 text-gray-300">Tu carrito está vacío</h2>
+                    <p class="text-gray-400 mb-8 text-lg">¡Parece que no has añadido ningún juego todavía!</p>
+                    <div class="space-y-4">
+                        <a href="catalogo.html" class="inline-block bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition duration-300 transform hover:scale-105">
+                            <i class="fas fa-gamepad mr-2"></i>
+                            Explorar Catálogo
+                        </a>
+                        <div class="flex justify-center space-x-6 text-gray-400">
+                            <div class="text-center">
+                                <i class="fas fa-truck text-2xl mb-2 block"></i>
+                                <span class="text-sm">Envío Gratis</span>
+                            </div>
+                            <div class="text-center">
+                                <i class="fas fa-undo text-2xl mb-2 block"></i>
+                                <span class="text-sm">Devoluciones</span>
+                            </div>
+                            <div class="text-center">
+                                <i class="fas fa-headset text-2xl mb-2 block"></i>
+                                <span class="text-sm">Soporte 24/7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-700 py-12 mt-auto">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Logo y descripción -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-gamepad text-3xl text-purple-500"></i>
+                        <span class="text-2xl font-bold">GameHub</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">Tu tienda de videojuegos de confianza. Los mejores juegos, las mejores ofertas, la mejor atención.</p>
+                    <div class="flex items-center space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Enlaces rápidos -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Enlaces Rápidos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-purple-400 transition duration-300">Inicio</a></li>
+                        <li><a href="catalogo.html" class="text-gray-400 hover:text-purple-400 transition duration-300">Catálogo</a></li>
+                        <li><a href="nosotros.html" class="text-gray-400 hover:text-purple-400 transition duration-300">Nosotros</a></li>
+                        <li><a href="contacto.html" class="text-gray-400 hover:text-purple-400 transition duration-300">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Información de contacto -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contacto</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><i class="fas fa-phone mr-2"></i> +57 123 456 7890</li>
+                        <li><i class="fas fa-envelope mr-2"></i> info@gamehub.com</li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i> Bogotá, Colombia</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 GameHub. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simulación de base de datos de juegos
+        const gamesDatabase = {
+            1: { title: "Cyberpunk 2077", price: 45000, image: "cyberpunk", platform: ["PC", "PlayStation", "Xbox"] },
+            2: { title: "The Witcher 3", price: 35000, image: "witcher", platform: ["PC", "PlayStation", "Xbox", "Nintendo"] },
+            3: { title: "God of War", price: 50000, image: "godofwar", platform: ["PlayStation", "PC"] },
+            4: { title: "Halo Infinite", price: 40000, image: "halo", platform: ["Xbox", "PC"] },
+            5: { title: "Elden Ring", price: 55000, image: "eldenring", platform: ["PC", "PlayStation", "Xbox"] },
+            6: { title: "FIFA 24", price: 60000, image: "fifa", platform: ["PC", "PlayStation", "Xbox", "Nintendo"] }
+        };
+
+        // Variables globales
+        let cart = [];
+        let discountPercentage = 0;
+        const shippingThreshold = 50000; // Envío gratis por encima de este valor
+
+        // Elementos del DOM
+        const cartContent = document.getElementById('cart-content');
+        const emptyCart = document.getElementById('empty-cart');
+        const cartItems = document.getElementById('cart-items');
+        const cartCount = document.getElementById('cart-count');
+        const subtotalElement = document.getElementById('subtotal');
+        const shippingElement = document.getElementById('shipping');
+        const discountElement = document.getElementById('discount');
+        const totalElement = document.getElementById('total');
+        const clearCartBtn = document.getElementById('clear-cart');
+        const applyDiscountBtn = document.getElementById('apply-discount');
+        const discountCodeInput = document.getElementById('discount-code');
+        const checkoutBtn = document.querySelector('.checkout-btn');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        // Funciones de utilidad
+        function formatPrice(price) {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            }).format(price);
+        }
+
+        function getPlatformIcon(platform) {
+            const icons = {
+                'PC': '<i class="fab fa-windows text-blue-400"></i>',
+                'PlayStation': '<i class="fab fa-playstation text-blue-500"></i>',
+                'Xbox': '<i class="fab fa-xbox text-green-500"></i>',
+                'Nintendo': '<i class="fas fa-gamepad text-red-500"></i>'
+            };
+            return icons[platform] || '<i class="fas fa-gamepad"></i>';
+        }
+
+        function getGameImagePlaceholder(imageName) {
+            const colors = [
+                'from-blue-500 to-purple-600',
+                'from-green-500 to-teal-600',
+                'from-red-500 to-orange-600',
+                'from-indigo-500 to-purple-600',
+                'from-pink-500 to-red-600',
+                'from-yellow-500 to-orange-600'
+            ];
+            return colors[Math.abs(imageName.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % colors.length];
+        }
+
+        // Cargar carrito desde localStorage (simulación)
+        function loadCart() {
+            // Simulamos algunos productos en el carrito para demostración
+            cart = [
+                { id: 1, quantity: 2 },
+                { id: 3, quantity: 1 },
+                { id: 5, quantity: 1 }
+            ];
+            
+            updateCartDisplay();
+        }
+
+        // Guardar carrito en localStorage (simulación)
+        function saveCart() {
+            // En una aplicación real, esto se guardaría en localStorage o se enviaría al servidor
+            console.log('Carrito guardado:', cart);
+        }
+
+        // Renderizar item del carrito
+        function renderCartItem(item) {
+            const game = gamesDatabase[item.id];
+            if (!game) return '';
+
+            const platformBadges = game.platform.slice(0, 2).map(p => 
+                `<span class="inline-flex items-center text-xs bg-gray-600 rounded-full px-2 py-1">${getPlatformIcon(p)} ${p}</span>`
+            ).join(' ');
+
+            return `
+                <div class="cart-item p-6 slide-in" data-item-id="${item.id}">
+                    <div class="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
+                        <!-- Imagen del juego -->
+                        <div class="w-24 h-24 bg-gradient-to-br ${getGameImagePlaceholder(game.image)} rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-gamepad text-2xl text-white opacity-70"></i>
+                        </div>
+                        
+                        <!-- Información del juego -->
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-xl font-semibold text-white mb-2">${game.title}</h3>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                ${platformBadges}
+                            </div>
+                            <p class="text-gray-400">${formatPrice(game.price)} por unidad</p>
+                        </div>
+                        
+                        <!-- Controles de cantidad -->
+                        <div class="flex items-center space-x-3">
+                            <span class="text-gray-400 text-sm">Cantidad:</span>
+                            <div class="flex items-center bg-gray-700 rounded-lg">
+                                <button class="quantity-btn px-3 py-2 hover:bg-gray-600 rounded-l-lg transition" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">
+                                    <i class="fas fa-minus text-sm"></i>
+                                </button>
+                                <span class="px-4 py-2 bg-gray-800 text-white font-semibold min-w-[3rem] text-center">${item.quantity}</span>
+                                <button class="quantity-btn px-3 py-2 hover:bg-gray-600 rounded-r-lg transition" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">
+                                    <i class="fas fa-plus text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Subtotal y eliminar -->
+                        <div class="flex items-center space-x-4">
+                            <div class="text-right">
+                                <p class="text-gray-400 text-sm">Subtotal</p>
+                                <p class="text-xl font-bold text-white">${formatPrice(game.price * item.quantity)}</p>
+                            </div>
+                            <button class="remove-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg transition" onclick="removeFromCart(${item.id})" title="Eliminar producto">
+                                <i class="fas fa-trash text-white"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Actualizar visualización del carrito
+        function updateCartDisplay() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+
+            if (cart.length === 0) {
+                cartContent.classList.add('hidden');
+                emptyCart.classList.remove('hidden');
+            } else {
+                cartContent.classList.remove('hidden');
+                emptyCart.classList.add('hidden');
+                
+                cartItems.innerHTML = cart.map(renderCartItem).join('');
+                updateTotals();
+            }
+        }
+
+        // Actualizar totales
+        function updateTotals() {
+            const subtotal = cart.reduce((sum, item) => {
+                const game = gamesDatabase[item.id];
+                return sum + (game ? game.price * item.quantity : 0);
+            }, 0);
+
+            const shipping = subtotal >= shippingThreshold ? 0 : 5000;
+            const discountAmount = Math.round(subtotal * (discountPercentage / 100));
+            const total = subtotal + shipping - discountAmount;
+
+            subtotalElement.textContent = formatPrice(subtotal);
+            shippingElement.textContent = shipping === 0 ? 'GRATIS' : formatPrice(shipping);
+            discountElement.textContent = discountAmount > 0 ? `-${formatPrice(discountAmount)}` : '$0';
+            totalElement.textContent = formatPrice(total);
+
+            // Mostrar información de envío gratis
+            if (subtotal < shippingThreshold && subtotal > 0) {
+                const remaining = shippingThreshold - subtotal;
+                shippingElement.innerHTML = `${formatPrice(shipping)} <br><small class="text-xs text-gray-300">¡Agrega ${formatPrice(remaining)} más para envío gratis!</small>`;
+            }
+        }
+
+        // Actualizar cantidad
+        function updateQuantity(gameId, newQuantity) {
+            if (newQuantity <= 0) {
+                removeFromCart(gameId);
+                return;
+            }
+
+            const item = cart.find(item => item.id === gameId);
+            if (item) {
+                item.quantity = Math.min(newQuantity, 10); // Máximo 10 unidades
+                updateCartDisplay();
+                saveCart();
+            }
+        }
+
+        // Eliminar del carrito
+        function removeFromCart(gameId) {
+            const itemElement = document.querySelector(`[data-item-id="${gameId}"]`);
+            if (itemElement) {
+                itemElement.classList.add('fade-out');
+                setTimeout(() => {
+                    cart = cart.filter(item => item.id !== gameId);
+                    updateCartDisplay();
+                    saveCart();
+                }, 500);
+            }
+        }
+
+        // Vaciar carrito
+        function clearCart() {
+            if (cart.length === 0) return;
+
+            if (confirm('¿Estás seguro de que quieres vaciar tu carrito? Esta acción no se puede deshacer.')) {
+                // Añadir efecto de animación
+                document.querySelectorAll('.cart-item').forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('fade-out');
+                    }, index * 100);
+                });
+
+                setTimeout(() => {
+                    cart = [];
+                    discountPercentage = 0;
+                    discountCodeInput.value = '';
+                    updateCartDisplay();
+                    saveCart();
+                }, 500);
+            }
+        }
+
+        // Aplicar código de descuento
+        function applyDiscount() {
+            const code = discountCodeInput.value.trim().toUpperCase();
+            const discountCodes = {
+                'GAMING10': 10,
+                'WELCOME15': 15,
+                'GAMER20': 20,
+                'BLACKFRIDAY': 25
+            };
+
+            if (discountCodes[code]) {
+                discountPercentage = discountCodes[code];
+                updateTotals();
+                
+                // Mostrar mensaje de éxito
+                applyDiscountBtn.innerHTML = '<i class="fas fa-check"></i>';
+                applyDiscountBtn.classList.add('bg-green-600');
+                discountCodeInput.disabled = true;
+                
+                setTimeout(() => {
+                    applyDiscountBtn.innerHTML = 'Aplicar';
+                    applyDiscountBtn.classList.remove('bg-green-600');
+                }, 2000);
+            } else {
+                // Mostrar mensaje de error
+                applyDiscountBtn.innerHTML = '<i class="fas fa-times"></i>';
+                applyDiscountBtn.classList.add('bg-red-600');
+                
+                setTimeout(() => {
+                    applyDiscountBtn.innerHTML = 'Aplicar';
+                    applyDiscountBtn.classList.remove('bg-red-600');
+                }, 2000);
+            }
+        }
+
+        // Finalizar compra
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío. Agrega algunos juegos antes de finalizar la compra.');
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => {
+                const game = gamesDatabase[item.id];
+                return sum + (game ? game.price * item.quantity : 0);
+            }, 0);
+
+            // Simulación de proceso de checkout
+            checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Procesando...';
+            checkoutBtn.disabled = true;
+
+            setTimeout(() => {
+                alert(`¡Gracias por tu compra! Total: ${formatPrice(total)}\n\nEn una aplicación real, serías redirigido a la página de pago.`);
+                
+                checkoutBtn.innerHTML = '<i class="fas fa-credit-card mr-3"></i> Finalizar Compra';
+                checkoutBtn.disabled = false;
+            }, 2000);
+        }
+
+        // Event Listeners
+        clearCartBtn.addEventListener('click', clearCart);
+        applyDiscountBtn.addEventListener('click', applyDiscount);
+        checkoutBtn.addEventListener('click', checkout);
+
+        // Enter key para aplicar descuento
+        discountCodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                applyDiscount();
+            }
+        });
+
+        // Menú mobile
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Función para agregar productos desde otras páginas (simulación)
+        function addToCart(gameId, quantity = 1) {
+            const existingItem = cart.find(item => item.id === gameId);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({ id: gameId, quantity });
+            }
+            
+            updateCartDisplay();
+            saveCart();
+        }
+
+        // Exponer función globalmente para uso desde otras páginas
+        window.addToCart = addToCart;
+
+        // Información de códigos de descuento (para mostrar ayuda)
+        function showDiscountHelp() {
+            const helpText = `
+Códigos de descuento disponibles:
+• GAMING10 - 10% de descuento
+• WELCOME15 - 15% de descuento  
+• GAMER20 - 20% de descuento
+• BLACKFRIDAY - 25% de descuento
+            `;
+            
+            // Crear tooltip o modal (versión simplificada)
+            if (confirm('¿Quieres ver los códigos de descuento disponibles?\n\n' + helpText)) {
+                discountCodeInput.focus();
+            }
+        }
+
+        // Agregar botón de ayuda para códigos
+        const helpButton = document.createElement('button');
+        helpButton.innerHTML = '<i class="fas fa-question-circle"></i>';
+        helpButton.className = 'ml-2 text-gray-400 hover:text-purple-400 transition';
+        helpButton.title = 'Ver códigos disponibles';
+        helpButton.onclick = showDiscountHelp;
+        discountCodeInput.parentNode.appendChild(helpButton);
+
+        // Función para simular productos recomendados cuando el carrito está vacío
+        function showRecommendedProducts() {
+            const recommendations = [
+                { id: 1, title: "Cyberpunk 2077", price: 45000 },
+                { id: 2, title: "The Witcher 3", price: 35000 },
+                { id: 4, title: "Halo Infinite", price: 40000 }
+            ];
+
+            let recommendHtml = '<div class="mt-8"><h3 class="text-xl font-semibold mb-4 text-center">Productos Recomendados</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-4">';
+            
+            recommendations.forEach(game => {
+                recommendHtml += `
+                    <div class="bg-gray-800 rounded-lg p-4 text-center">
+                        <div class="h-20 bg-gradient-to-br ${getGameImagePlaceholder(game.title)} rounded mb-3 flex items-center justify-center">
+                            <i class="fas fa-gamepad text-2xl text-white opacity-50"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2">${game.title}</h4>
+                        <p class="text-purple-400 font-bold mb-3">${formatPrice(game.price)}</p>
+                        <button onclick="addToCart(${game.id})" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm transition">
+                            <i class="fas fa-cart-plus mr-1"></i> Agregar
+                        </button>
+                    </div>
+                `;
+            });
+            
+            recommendHtml += '</div></div>';
+            
+            // Agregar recomendaciones al carrito vacío
+            const emptyCartDiv = document.getElementById('empty-cart');
+            if (!emptyCartDiv.querySelector('.recommendations')) {
+                const recommendDiv = document.createElement('div');
+                recommendDiv.className = 'recommendations';
+                recommendDiv.innerHTML = recommendHtml;
+                emptyCartDiv.appendChild(recommendDiv);
+            }
+        }
+
+        // Función para mostrar notificaciones toast
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-20 right-4 z-50 px-6 py-3 rounded-lg text-white font-semibold transform translate-x-full transition-transform duration-300 ${
+                type === 'success' ? 'bg-green-600' : 'bg-red-600'
+            }`;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            // Mostrar toast
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Ocultar toast
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Modificar función addToCart para mostrar notificación
+        const originalAddToCart = window.addToCart;
+        window.addToCart = function(gameId, quantity = 1) {
+            originalAddToCart(gameId, quantity);
+            const game = gamesDatabase[gameId];
+            if (game) {
+                showToast(`${game.title} agregado al carrito`);
+            }
+        };
+
+        // Función para calcular ahorro con descuentos
+        function calculateSavings() {
+            if (discountPercentage > 0) {
+                const subtotal = cart.reduce((sum, item) => {
+                    const game = gamesDatabase[item.id];
+                    return sum + (game ? game.price * item.quantity : 0);
+                }, 0);
+                
+                const savings = Math.round(subtotal * (discountPercentage / 100));
+                if (savings > 0) {
+                    showToast(`¡Estás ahorrando ${formatPrice(savings)} con tu descuento!`, 'success');
+                }
+            }
+        }
+
+        // Función para manejar el scroll suave al checkout
+        function smoothScrollToCheckout() {
+            document.querySelector('.total-card').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+
+        // Agregar efectos visuales al agregar/quitar productos
+        function addVisualEffects() {
+            // Efecto de partículas al eliminar producto (simplificado)
+            const removeButtons = document.querySelectorAll('.remove-btn');
+            removeButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Crear efecto de "explosión" visual
+                    const rect = btn.getBoundingClientRect();
+                    for (let i = 0; i < 5; i++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'fixed w-2 h-2 bg-red-500 rounded-full pointer-events-none z-50';
+                        particle.style.left = rect.left + 'px';
+                        particle.style.top = rect.top + 'px';
+                        particle.style.animation = `particle-explode-${i} 0.8s ease-out forwards`;
+                        document.body.appendChild(particle);
+                        
+                        setTimeout(() => {
+                            document.body.removeChild(particle);
+                        }, 800);
+                    }
+                });
+            });
+        }
+
+        // CSS para animaciones de partículas
+        const particleStyles = document.createElement('style');
+        particleStyles.textContent = `
+            @keyframes particle-explode-0 { to { transform: translate(-20px, -20px); opacity: 0; } }
+            @keyframes particle-explode-1 { to { transform: translate(20px, -20px); opacity: 0; } }
+            @keyframes particle-explode-2 { to { transform: translate(-20px, 20px); opacity: 0; } }
+            @keyframes particle-explode-3 { to { transform: translate(20px, 20px); opacity: 0; } }
+            @keyframes particle-explode-4 { to { transform: translate(0px, -30px); opacity: 0; } }
+        `;
+        document.head.appendChild(particleStyles);
+
+        // Función para validar el checkout
+        function validateCheckout() {
+            if (cart.length === 0) {
+                showToast('Tu carrito está vacío', 'error');
+                return false;
+            }
+
+            const total = cart.reduce((sum, item) => {
+                const game = gamesDatabase[item.id];
+                return sum + (game ? game.price * item.quantity : 0);
+            }, 0);
+
+            if (total < 1000) { // Mínimo de compra
+                showToast('El monto mínimo de compra es $1.000', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Modificar función de checkout
+        const originalCheckout = checkout;
+        function checkout() {
+            if (!validateCheckout()) return;
+            
+            // Mostrar modal de confirmación (versión simplificada)
+            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const total = cart.reduce((sum, item) => {
+                const game = gamesDatabase[item.id];
+                return sum + (game ? game.price * item.quantity : 0);
+            }, 0);
+
+            const confirmMessage = `
+¿Confirmar compra?
+
+Productos: ${itemCount} ${itemCount === 1 ? 'juego' : 'juegos'}
+Total: ${formatPrice(total)}
+
+En una aplicación real, serías redirigido al sistema de pagos.
+            `;
+
+            if (confirm(confirmMessage)) {
+                originalCheckout();
+                
+                // Simular éxito y limpiar carrito
+                setTimeout(() => {
+                    cart = [];
+                    discountPercentage = 0;
+                    discountCodeInput.value = '';
+                    updateCartDisplay();
+                    saveCart();
+                    showToast('¡Compra realizada con éxito!');
+                }, 2000);
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCart();
+            
+            // Si el carrito está vacío, mostrar productos recomendados
+            if (cart.length === 0) {
+                setTimeout(showRecommendedProducts, 500);
+            }
+        });
+
+        // Auto-save del carrito cada 30 segundos
+        setInterval(() => {
+            if (cart.length > 0) {
+                saveCart();
+            }
+        }, 30000);
+
+        // Detectar cuando el usuario abandona la página con productos en el carrito
+        window.addEventListener('beforeunload', (e) => {
+            if (cart.length > 0) {
+                const message = '¿Estás seguro de que quieres salir? Tienes productos en tu carrito.';
+                e.returnValue = message;
+                return message;
+            }
+        });
+
+        // Función para recuperar carrito abandonado (simulación)
+        function checkAbandonedCart() {
+            // En una aplicación real, esto verificaría si hay un carrito guardado
+            const hasAbandonedCart = Math.random() > 0.7; // 30% de probabilidad para demo
+            
+            if (hasAbandonedCart && cart.length === 0) {
+                setTimeout(() => {
+                    if (confirm('¡Tienes productos guardados en tu carrito! ¿Quieres recuperarlos?')) {
+                        // Simular carga de carrito guardado
+                        cart = [
+                            { id: 2, quantity: 1 },
+                            { id: 6, quantity: 1 }
+                        ];
+                        updateCartDisplay();
+                        showToast('¡Carrito recuperado exitosamente!');
+                    }
+                }, 3000);
+            }
+        }
+
+        // Ejecutar verificación de carrito abandonado
+        setTimeout(checkAbandonedCart, 5000);
+    </script>
+</body>
+</html>
