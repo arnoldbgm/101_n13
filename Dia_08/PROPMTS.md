@@ -13,3 +13,22 @@ Convierte en un programador senior, ayudame a desarrollar esta web para una tien
 
 ---
 
+## Segundo Prompt
+
+Continuando con el plan, desarrollaremos la pagina de catalogo "🎮 2. Catálogo (catalogo.html)
+Contenido principal:
+* Listado de videojuegos: Cada juego debe mostrar:
+   * Imagen de portada.
+   * Título.
+   * Precio.
+   * Plataforma (PC, PS, Xbox, etc.).
+   * Botón "Agregar al carrito".
+* Filtros por:
+   * Plataforma.
+   * Género.
+   * Precio.
+* Barra de búsqueda para buscar títulos por nombre.
+* Paginación o sección de más juegos si el catálogo es grande.
+Elementos comunes:
+* Barra de navegación.
+* Footer con enlaces y redes sociales."

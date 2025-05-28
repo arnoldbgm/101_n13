@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Catálogo - GameHub</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <style>
+      .game-card {
+         transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .game-card:hover {
+         transform: translateY(-8px);
+         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      }
+
+      .filter-badge {
+         background: linear-gradient(45deg, #667eea, #764ba2);
+      }
+
+      .price-tag {
+         background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+      }
+
+      .platform-badge {
+         font-size: 0.75rem;
+         padding: 0.25rem 0.5rem;
+      }
+
+      .search-container {
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .genre-filter:checked+label {
+         background: linear-gradient(45deg, #667eea, #764ba2);
+         color: white;
+      }
+
+      .loading-spinner {
+         animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+         from {
+            transform: rotate(0deg);
+         }
+
+         to {
+            transform: rotate(360deg);
+         }
+      }
+   </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+   <!-- Barra de Navegación -->
+   <nav class="bg-gray-800 shadow-lg sticky top-0 z-50">
+      <div class="container mx-auto px-4">
+         <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+               <i class="fas fa-gamepad text-3xl text-purple-500"></i>
+               <span class="text-2xl font-bold text-white">GameHub</span>
+            </div>
+
+            <!-- Navegación Desktop -->
+            <div class="hidden md:flex items-center space-x-8">
+               <a href="index.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Inicio</a>
+               <a href="#" class="text-purple-400 font-semibold border-b-2 border-purple-400">Catálogo</a>
+               <a href="nosotros.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Nosotros</a>
+               <a href="contacto.html" class="text-gray-300 hover:text-purple-400 transition duration-300">Contacto</a>
+            </div>
+
+            <!-- Carrito y Menú Mobile -->
+            <div class="flex items-center space-x-4">
+               <a href="carrito.html" class="relative">
+                  <i
+                     class="fas fa-shopping-cart text-2xl text-purple-400 hover:text-purple-300 transition duration-300"></i>
+                  <span
+                     class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                     id="cart-count">0</span>
+               </a>
+               <button class="md:hidden text-white" id="mobile-menu-btn">
+                  <i class="fas fa-bars text-xl"></i>
+               </button>
+            </div>
+         </div>
+
+         <!-- Menú Mobile -->
+         <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 bg-gray-700">
+               <a href="index.html" class="block px-3 py-2 text-gray-300 hover:text-purple-400">Inicio</a>
+               <a href="#" class="block px-3 py-2 text-purple-400 font-semibold">Catálogo</a>
+               <a href="nosotros.html" class="block px-3 py-2 text-gray-300 hover:text-purple-400">Nosotros</a>
+               <a href="contacto.html" class="block px-3 py-2 text-gray-300 hover:text-purple-400">Contacto</a>
+            </div>
+         </div>
+      </div>
+   </nav>
+
+   <!-- Header del Catálogo -->
+   <section class="search-container py-16">
+      <div class="container mx-auto px-4">
+         <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Catálogo de Juegos</h1>
+            <p class="text-xl text-gray-200">Descubre tu próxima aventura gaming</p>
+         </div>
+
+         <!-- Barra de Búsqueda -->
+         <div class="max-w-2xl mx-auto">
+            <div class="relative">
+               <input type="text" placeholder="Buscar videojuegos..."
+                  class="w-full px-6 py-4 bg-white bg-opacity-20 backdrop-blur-sm rounded-full text-white placeholder-gray-300 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+                  id="search-input">
+               <button
+                  class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 p-3 rounded-full hover:bg-opacity-30 transition">
+                  <i class="fas fa-search text-white"></i>
+               </button>
+            </div>
+         </div>
+      </div>
+   </section>
+
+   <!-- Filtros y Catálogo -->
+   <section class="py-12">
+      <div class="container mx-auto px-4">
+         <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar de Filtros -->
+            <div class="lg:w-1/4">
+               <div class="bg-gray-800 rounded-lg p-6 sticky top-24">
+                  <h3 class="text-xl font-bold mb-6 flex items-center">
+                     <i class="fas fa-filter text-purple-400 mr-2"></i>
+                     Filtros
+                  </h3>
+
+                  <!-- Filtro por Plataforma -->
+                  <div class="mb-6">
+                     <h4 class="font-semibold mb-3 text-gray-300">Plataforma</h4>
+                     <div class="space-y-2">
+                        <label class="flex items-center">
+                           <input type="checkbox" class="platform-filter mr-2" value="PC" checked>
+                           <i class="fab fa-windows text-blue-400 mr-2"></i>
+                           PC
+                        </label>
+                        <label class="flex items-center">
+                           <input type="checkbox" class="platform-filter mr-2" value="PlayStation" checked>
+                           <i class="fab fa-playstation text-blue-500 mr-2"></i>
+                           PlayStation
+                        </label>
+                        <label class="flex items-center">
+                           <input type="checkbox" class="platform-filter mr-2" value="Xbox" checked>
+                           <i class="fab fa-xbox text-green-500 mr-2"></i>
+                           Xbox
+                        </label>
+                        <label class="flex items-center">
+                           <input type="checkbox" class="platform-filter mr-2" value="Nintendo" checked>
+                           <i class="fas fa-gamepad text-red-500 mr-2"></i>
+                           Nintendo
+                        </label>
+                     </div>
+                  </div>
+
+                  <!-- Filtro por Género -->
+                  <div class="mb-6">
+                     <h4 class="font-semibold mb-3 text-gray-300">Género</h4>
+                     <div class="space-y-2">
+                        <label class="flex items-center">
+                           <input type="radio" name="genre" class="genre-filter hidden" value="all" checked>
+                           <label
+                              class="cursor-pointer px-3 py-1 rounded-full bg-gray-700 hover:bg-gray-600 transition text-sm">Todos</label>
+                        </label>
+                        <label class="flex items-center">
+                           <input type="radio" name="genre" class="genre-filter hidden" value="Acción">
+                           <label
+                              class="cursor-pointer px-3 py-1 rounded-full bg-gray-700 hover:bg-gray-600 transition text-sm">Acción</label>
+                        </label>
+                        <label class="flex items-center">
+                           <input type="radio" name="genre" class="genre-filter hidden" value="RPG">
+                           <label
+                              class="cursor-pointer px-3 py-1 rounded-full bg-gray-700 hover:bg-gray-600 transition text-sm">RPG</label>
+                        </label>
+                        <label class="flex items-center">
+                           <input type="radio" name="genre" class="genre-filter hidden" value="Aventura">
+                           <label
+                              class="cursor-pointer px-3 py-1 rounded-full bg-gray-700 hover:bg-gray-600 transition text-sm">Aventura</label>
+                        </label>
+                        <label class="flex items-center">
+                           <input type="radio" name="genre" class="genre-filter hidden" value="FPS">
+                           <label
+                              class="cursor-pointer px-3 py-1 rounded-full bg-gray-700 hover:bg-gray-600 transition text-sm">FPS</label>
+                        </label>
+                        <label class="flex items-center">
+                           <input type="radio" name="genre" class="genre-filter hidden" value="Deportes">
+                           <label
+                              class="cursor-pointer px-3 py-1 rounded-full bg-gray-700 hover:bg-gray-600 transition text-sm">Deportes</label>
+                        </label>
+                     </div>
+                  </div>
+
+                  <!-- Filtro por Precio -->
+                  <div class="mb-6">
+                     <h4 class="font-semibold mb-3 text-gray-300">Rango de Precio</h4>
+                     <div class="space-y-2">
+                        <label class="flex items-center">
+                           <input type="radio" name="price" class="price-filter mr-2" value="all" checked>
+                           Todos los precios
+                        </label>
+                        <label class="flex items-center">
+                           <input type="radio" name="price" class="price-filter mr-2" value="0-30000">
+                           $0 - $30.000
+                        </label>
+                        <label class="flex items-center">
+                           <input type="radio" name="price" class="price-filter mr-2" value="30000-50000">
+                           $30.000 - $50.000
+                        </label>
+                        <label class="flex items-center">
+                           <input type="radio" name="price" class="price-filter mr-2" value="50000-999999">
+                           Más de $50.000
+                        </label>
+                     </div>
+                  </div>
+
+                  <!-- Botón Limpiar Filtros -->
+                  <button class="w-full bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg transition"
+                     id="clear-filters">
+                     <i class="fas fa-undo mr-2"></i>
+                     Limpiar Filtros
+                  </button>
+               </div>
+            </div>
+
+            <!-- Grid de Juegos -->
+            <div class="lg:w-3/4">
+               <!-- Controles y Estadísticas -->
+               <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+                  <div class="flex items-center space-x-4 mb-4 sm:mb-0">
+                     <span class="text-gray-400">Mostrando <span id="showing-count">12</span> de <span
+                           id="total-count">24</span> juegos</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                     <label class="text-gray-400">Ordenar por:</label>
+                     <select
+                        class="bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        id="sort-select">
+                        <option value="name">Nombre A-Z</option>
+                        <option value="price-low">Precio: Menor a Mayor</option>
+                        <option value="price-high">Precio: Mayor a Menor</option>
+                        <option value="newest">Más Recientes</option>
+                     </select>
+                  </div>
+               </div>
+
+               <!-- Loading Spinner -->
+               <div id="loading" class="hidden text-center py-12">
+                  <i class="fas fa-spinner loading-spinner text-4xl text-purple-500"></i>
+                  <p class="text-gray-400 mt-4">Cargando juegos...</p>
+               </div>
+
+               <!-- Grid de Juegos -->
+               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="games-grid">
+                  <!-- Los juegos se cargarán dinámicamente aquí -->
+               </div>
+
+               <!-- No Results Message -->
+               <div id="no-results" class="hidden text-center py-12">
+                  <i class="fas fa-search text-6xl text-gray-600 mb-4"></i>
+                  <p class="text-xl text-gray-400 mb-2">No se encontraron juegos</p>
+                  <p class="text-gray-500">Intenta ajustar tus filtros de búsqueda</p>
+               </div>
+
+               <!-- Paginación -->
+               <div class="flex justify-center items-center space-x-2 mt-12" id="pagination">
+                  <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition disabled:opacity-50"
+                     id="prev-page" disabled>
+                     <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <div class="flex space-x-1" id="page-numbers">
+                     <!-- Page numbers will be generated here -->
+                  </div>
+                  <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition" id="next-page">
+                     <i class="fas fa-chevron-right"></i>
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+   </section>
+
+   <!-- Footer -->
+   <footer class="bg-gray-900 border-t border-gray-700 py-12">
+      <div class="container mx-auto px-4">
+         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Logo y descripción -->
+            <div class="md:col-span-2">
+               <div class="flex items-center space-x-2 mb-4">
+                  <i class="fas fa-gamepad text-3xl text-purple-500"></i>
+                  <span class="text-2xl font-bold">GameHub</span>
+               </div>
+               <p class="text-gray-400 mb-6">Tu tienda de videojuegos de confianza. Los mejores juegos, las mejores
+                  ofertas, la mejor atención.</p>
+               <div class="flex items-center space-x-4">
+                  <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                     <i class="fab fa-facebook"></i>
+                  </a>
+                  <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                     <i class="fab fa-twitter"></i>
+                  </a>
+                  <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                     <i class="fab fa-instagram"></i>
+                  </a>
+                  <a href="#" class="text-gray-400 hover:text-purple-400 text-2xl transition duration-300">
+                     <i class="fab fa-discord"></i>
+                  </a>
+               </div>
+            </div>
+
+            <!-- Enlaces rápidos -->
+            <div>
+               <h3 class="text-lg font-semibold mb-4">Enlaces Rápidos</h3>
+               <ul class="space-y-2">
+                  <li><a href="index.html"
+                        class="text-gray-400 hover:text-purple-400 transition duration-300">Inicio</a></li>
+                  <li><a href="#" class="text-gray-400 hover:text-purple-400 transition duration-300">Catálogo</a></li>
+                  <li><a href="nosotros.html"
+                        class="text-gray-400 hover:text-purple-400 transition duration-300">Nosotros</a></li>
+                  <li><a href="contacto.html"
+                        class="text-gray-400 hover:text-purple-400 transition duration-300">Contacto</a></li>
+               </ul>
+            </div>
+
+            <!-- Información de contacto -->
+            <div>
+               <h3 class="text-lg font-semibold mb-4">Contacto</h3>
+               <ul class="space-y-2 text-gray-400">
+                  <li><i class="fas fa-phone mr-2"></i> +57 123 456 7890</li>
+                  <li><i class="fas fa-envelope mr-2"></i> info@gamehub.com</li>
+                  <li><i class="fas fa-map-marker-alt mr-2"></i> Bogotá, Colombia</li>
+               </ul>
+            </div>
+         </div>
+
+         <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 GameHub. Todos los derechos reservados.</p>
+         </div>
+      </div>
+   </footer>
+
+   <script>
+      // Base de datos de juegos (simulada)
+      const games = [
+         {
+            id: 1,
+            title: "Cyberpunk 2077",
+            price: 45000,
+            platform: ["PC", "PlayStation", "Xbox"],
+            genre: "Acción",
+            image: "cyberpunk",
+            rating: 4.2,
+            new: true
+         },
+         {
+            id: 2,
+            title: "The Witcher 3",
+            price: 35000,
+            platform: ["PC", "PlayStation", "Xbox", "Nintendo"],
+            genre: "RPG",
+            image: "witcher",
+            rating: 4.8,
+            new: false
+         },
+         {
+            id: 3,
+            title: "God of War",
+            price: 50000,
+            platform: ["PlayStation", "PC"],
+            genre: "Acción",
+            image: "godofwar",
+            rating: 4.9,
+            new: false
+         },
+         {
+            id: 4,
+            title: "Halo Infinite",
+            price: 40000,
+            platform: ["Xbox", "PC"],
+            genre: "FPS",
+            image: "halo",
+            rating: 4.5,
+            new: true
+         },
+         {
+            id: 5,
+            title: "Elden Ring",
+            price: 55000,
+            platform: ["PC", "PlayStation", "Xbox"],
+            genre: "RPG",
+            image: "eldenring",
+            rating: 4.9,
+            new: true
+         },
+         {
+            id: 6,
+            title: "FIFA 24",
+            price: 60000,
+            platform: ["PC", "PlayStation", "Xbox", "Nintendo"],
+            genre: "Deportes",
+            image: "fifa",
+            rating: 4.1,
+            new: true
+         },
+         {
+            id: 7,
+            title: "Assassin's Creed Valhalla",
+            price: 42000,
+            platform: ["PC", "PlayStation", "Xbox"],
+            genre: "Aventura",
+            image: "ac",
+            rating: 4.3,
+            new: false
+         },
+         {
+            id: 8,
+            title: "Call of Duty MW3",
+            price: 65000,
+            platform: ["PC", "PlayStation", "Xbox"],
+            genre: "FPS",
+            image: "cod",
+            rating: 4.0,
+            new: true
+         },
+         {
+            id: 9,
+            title: "Spider-Man Remastered",
+            price: 48000,
+            platform: ["PC", "PlayStation"],
+            genre: "Acción",
+            image: "spiderman",
+            rating: 4.7,
+            new: false
+         },
+         {
+            id: 10,
+            title: "Horizon Zero Dawn",
+            price: 38000,
+            platform: ["PC", "PlayStation"],
+            genre: "Aventura",
+            image: "horizon",
+            rating: 4.6,
+            new: false
+         },
+         {
+            id: 11,
+            title: "Forza Horizon 5",
+            price: 52000,
+            platform: ["Xbox", "PC"],
+            genre: "Deportes",
+            image: "forza",
+            rating: 4.8,
+            new: false
+         },
+         {
+            id: 12,
+            title: "Red Dead Redemption 2",
+            price: 44000,
+            platform: ["PC", "PlayStation", "Xbox"],
+            genre: "Aventura",
+            image: "rdr2",
+            rating: 4.9,
+            new: false
+         },
+         {
+            id: 13,
+            title: "Baldur's Gate 3",
+            price: 58000,
+            platform: ["PC", "PlayStation"],
+            genre: "RPG",
+            image: "baldurs",
+            rating: 4.9,
+            new: true
+         },
+         {
+            id: 14,
+            title: "Street Fighter 6",
+            price: 55000,
+            platform: ["PC", "PlayStation", "Xbox"],
+            genre: "Acción",
+            image: "sf6",
+            rating: 4.4,
+            new: true
+         },
+         {
+            id: 15,
+            title: "Zelda: Tears of Kingdom",
+            price: 62000,
+            platform: ["Nintendo"],
+            genre: "Aventura",
+            image: "zelda",
+            rating: 4.9,
+            new: true
+         },
+         {
+            id: 16,
+            title: "Counter-Strike 2",
+            price: 25000,
+            platform: ["PC"],
+            genre: "FPS",
+            image: "cs2",
+            rating: 4.2,
+            new: true
+         },
+         {
+            id: 17,
+            title: "Gran Turismo 7",
+            price: 54000,
+            platform: ["PlayStation"],
+            genre: "Deportes",
+            image: "gt7",
+            rating: 4.5,
+            new: false
+         },
+         {
+            id: 18,
+            title: "Final Fantasy XVI",
+            price: 59000,
+            platform: ["PlayStation", "PC"],
+            genre: "RPG",
+            image: "ff16",
+            rating: 4.6,
+            new: true
+         },
+         {
+            id: 19,
+            title: "Starfield",
+            price: 61000,
+            platform: ["Xbox", "PC"],
+            genre: "RPG",
+            image: "starfield",
+            rating: 4.1,
+            new: true
+         },
+         {
+            id: 20,
+            title: "Mario Kart 8 Deluxe",
+            price: 49000,
+            platform: ["Nintendo"],
+            genre: "Deportes",
+            image: "mariokart",
+            rating: 4.8,
+            new: false
+         },
+         {
+            id: 21,
+            title: "Mortal Kombat 1",
+            price: 56000,
+            platform: ["PC", "PlayStation", "Xbox", "Nintendo"],
+            genre: "Acción",
+            image: "mk1",
+            rating: 4.3,
+            new: true
+         },
+         {
+            id: 22,
+            title: "Diablo IV",
+            price: 63000,
+            platform: ["PC", "PlayStation", "Xbox"],
+            genre: "RPG",
+            image: "diablo4",
+            rating: 4.0,
+            new: true
+         },
+         {
+            id: 23,
+            title: "Resident Evil 4",
+            price: 47000,
+            platform: ["PC", "PlayStation", "Xbox"],
+            genre: "Aventura",
+            image: "re4",
+            rating: 4.8,
+            new: true
+         },
+         {
+            id: 24,
+            title: "Super Mario Odyssey",
+            price: 46000,
+            platform: ["Nintendo"],
+            genre: "Aventura",
+            image: "mario",
+            rating: 4.9,
+            new: false
+         }
+      ];
+
+      // Variables globales
+      let filteredGames = [...games];
+      let currentPage = 1;
+      const gamesPerPage = 12;
+      let cartItems = 0;
+
+      // Elementos del DOM
+      const gamesGrid = document.getElementById('games-grid');
+      const searchInput = document.getElementById('search-input');
+      const platformFilters = document.querySelectorAll('.platform-filter');
+      const genreFilters = document.querySelectorAll('.genre-filter');
+      const priceFilters = document.querySelectorAll('.price-filter');
+      const sortSelect = document.getElementById('sort-select');
+      const clearFiltersBtn = document.getElementById('clear-filters');
+      const showingCount = document.getElementById('showing-count');
+      const totalCount = document.getElementById('total-count');
+      const loading = document.getElementById('loading');
+      const noResults = document.getElementById('no-results');
+      const cartCount = document.getElementById('cart-count');
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      // Funciones de utilidad
+      function formatPrice(price) {
+         return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0
+         }).format(price);
+      }
+
+      function getPlatformIcon(platform) {
+         const icons = {
+            'PC': '<i class="fab fa-windows text-blue-400"></i>',
+            'PlayStation': '<i class="fab fa-playstation text-blue-500"></i>',
+            'Xbox': '<i class="fab fa-xbox text-green-500"></i>',
+            'Nintendo': '<i class="fas fa-gamepad text-red-500"></i>'
+         };
+         return icons[platform] || '<i class="fas fa-gamepad"></i>';
+      }
+
+      function getGameImagePlaceholder(imageName) {
+         const colors = [
+            'from-blue-500 to-purple-600',
+            'from-green-500 to-teal-600',
+            'from-red-500 to-orange-600',
+            'from-indigo-500 to-purple-600',
+            'from-pink-500 to-red-600',
+            'from-yellow-500 to-orange-600'
+         ];
+         return colors[Math.abs(imageName.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % colors.length];
+      }
+
+      // Renderizar juego individual
+      function renderGame(game) {
+         const platformBadges = game.platform.map(p =>
+            `<span class="platform-badge bg-gray-600 rounded-full text-white">${getPlatformIcon(p)} ${p}</span>`
+         ).join(' ');
+
+         return `
+                <div class="game-card bg-gray-800 rounded-lg overflow-hidden shadow-lg" data-game-id="${game.id}">
+                    <div class="h-48 bg-gradient-to-br ${getGameImagePlaceholder(game.image)} flex items-center justify-center relative">
+                        <i class="fas fa-gamepad text-6xl text-white opacity-50"></i>
+                        ${game.new ? '<span class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">NUEVO</span>' : ''}
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2 text-white">${game.title}</h3>
+                        <p class="text-gray-400 text-sm mb-2">${game.genre}</p>
+                        <div class="flex flex-wrap gap-1 mb-3">
+                            ${platformBadges}
+                        </div>
+                        <div class="flex items-center mb-3">
+                            <div class="flex text-yellow-400 mr-2">
+                                ${Array(5).fill().map((_, i) =>
+            `<i class="fas fa-star ${i < Math.floor(game.rating) ? '' : 'opacity-30'}"></i>`
+         ).join('')}
+                            </div>
+                            <span class="text-gray-400 text-sm">(${game.rating})</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="price-tag text-white px-3 py-1 rounded-full font-bold">${formatPrice(game.price)}</span>
+                            <button class="add-to-cart bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition duration-300" data-game-id="${game.id}">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // Renderizar grid de juegos
+      function renderGames() {
+         loading.classList.remove('hidden');
+         gamesGrid.innerHTML = '';
+         noResults.classList.add('hidden');
+
+         setTimeout(() => {
+            const startIndex = (currentPage - 1) * gamesPerPage;
+            const endIndex = startIndex + gamesPerPage;
+            const gamesToShow = filteredGames.slice(startIndex, endIndex);
+
+            loading.classList.add('hidden');
+
+            if (gamesToShow.length === 0) {
+               noResults.classList.remove('hidden');
+               showingCount.textContent = '0';
+            } else {
+               gamesGrid.innerHTML = gamesToShow.map(renderGame).join('');
+               showingCount.textContent = gamesToShow.length;
+
+               // Agregar event listeners a los botones de carrito
+               document.querySelectorAll('.add-to-cart').forEach(btn => {
+                  btn.addEventListener('click', addToCart);
+               });
+            }
+
+            totalCount.textContent = filteredGames.length;
+            renderPagination();
+         }, 500);
+      }
+
+      // Función de filtrado
+      function applyFilters() {
+         const searchTerm = searchInput.value.toLowerCase();
+         const selectedPlatforms = Array.from(platformFilters)
+            .filter(filter => filter.checked)
+            .map(filter => filter.value);
+         const selectedGenre = document.querySelector('.genre-filter:checked')?.value || 'all';
+         const selectedPrice = document.querySelector('.price-filter:checked')?.value || 'all';
+
+         filteredGames = games.filter(game => {
+            // Filtro de búsqueda
+            const matchesSearch = game.title.toLowerCase().includes(searchTerm) ||
+               game.genre.toLowerCase().includes(searchTerm);
+
+            // Filtro de plataforma
+            const matchesPlatform = selectedPlatforms.some(platform =>
+               game.platform.includes(platform)
+            );
+
+            // Filtro de género
+            const matchesGenre = selectedGenre === 'all' || game.genre === selectedGenre;
+
+            // Filtro de precio
+            let matchesPrice = true;
+            if (selectedPrice !== 'all') {
+               const [min, max] = selectedPrice.split('-').map(Number);
+               matchesPrice = game.price >= min && game.price <= max;
+            }
+
+            return matchesSearch && matchesPlatform && matchesGenre && matchesPrice;
+         });
+
+         // Aplicar ordenamiento
+         applySorting();
+
+         currentPage = 1;
+         renderGames();
+      }
+
+      // Función de ordenamiento
+      function applySorting() {
+         const sortType = sortSelect.value;
+
+         switch (sortType) {
+            case 'name':
+               filteredGames.sort((a, b) => a.title.localeCompare(b.title));
+               break;
+            case 'price-low':
+               filteredGames.sort((a, b) => a.price - b.price);
+               break;
+            case 'price-high':
+               filteredGames.sort((a, b) => b.price - a.price);
+               break;
+            case 'newest':
+               filteredGames.sort((a, b) => b.new - a.new);
+               break;
+         }
+      }
+
+      // Renderizar paginación
+      function renderPagination() {
+         const totalPages = Math.ceil(filteredGames.length / gamesPerPage);
+         const pageNumbers = document.getElementById('page-numbers');
+         const prevBtn = document.getElementById('prev-page');
+         const nextBtn = document.getElementById('next-page');
+
+         // Limpiar números de página
+         pageNumbers.innerHTML = '';
+
+         // Botón anterior
+         prevBtn.disabled = currentPage === 1;
+
+         // Números de página
+         let startPage = Math.max(1, currentPage - 2);
+         let endPage = Math.min(totalPages, startPage + 4);
+
+         if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+         }
+
+         for (let i = startPage; i <= endPage; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = `px-3 py-2 rounded-lg transition ${i === currentPage
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+               }`;
+            pageBtn.addEventListener('click', () => {
+               currentPage = i;
+               renderGames();
+            });
+            pageNumbers.appendChild(pageBtn);
+         }
+
+         // Botón siguiente
+         nextBtn.disabled = currentPage === totalPages;
+      }
+
+      // Agregar al carrito
+      function addToCart(e) {
+         const gameId = parseInt(e.target.closest('button').dataset.gameId);
+         const game = games.find(g => g.id === gameId);
+
+         cartItems++;
+         cartCount.textContent = cartItems;
+
+         // Efecto visual
+         const button = e.target.closest('button');
+         const originalContent = button.innerHTML;
+         button.innerHTML = '<i class="fas fa-check"></i>';
+         button.classList.add('bg-green-600');
+         button.disabled = true;
+
+         setTimeout(() => {
+            button.innerHTML = originalContent;
+            button.classList.remove('bg-green-600');
+            button.disabled = false;
+         }, 1500);
+
+         // Simulación de almacenamiento (en una app real, esto iría al localStorage o backend)
+         console.log(`Agregado al carrito: ${game.title} - ${formatPrice(game.price)}`);
+      }
+
+      // Limpiar filtros
+      function clearFilters() {
+         searchInput.value = '';
+         platformFilters.forEach(filter => filter.checked = true);
+         document.querySelector('.genre-filter[value="all"]').checked = true;
+         document.querySelector('.price-filter[value="all"]').checked = true;
+         sortSelect.value = 'name';
+         applyFilters();
+      }
+
+      // Event listeners
+      searchInput.addEventListener('input', debounce(applyFilters, 300));
+      platformFilters.forEach(filter => filter.addEventListener('change', applyFilters));
+      genreFilters.forEach(filter => filter.addEventListener('change', applyFilters));
+      priceFilters.forEach(filter => filter.addEventListener('change', applyFilters));
+      sortSelect.addEventListener('change', applyFilters);
+      clearFiltersBtn.addEventListener('click', clearFilters);
+
+      // Paginación
+      document.getElementById('prev-page').addEventListener('click', () => {
+         if (currentPage > 1) {
+            currentPage--;
+            renderGames();
+         }
+      });
+
+      document.getElementById('next-page').addEventListener('click', () => {
+         const totalPages = Math.ceil(filteredGames.length / gamesPerPage);
+         if (currentPage < totalPages) {
+            currentPage++;
+            renderGames();
+         }
+      });
+
+      // Menú mobile
+      mobileMenuBtn.addEventListener('click', () => {
+         mobileMenu.classList.toggle('hidden');
+      });
+
+      // Función debounce para optimizar búsquedas
+      function debounce(func, wait) {
+         let timeout;
+         return function executedFunction(...args) {
+            const later = () => {
+               clearTimeout(timeout);
+               func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+         };
+      }
+
+      // Fix para filtros de género (radio buttons personalizados)
+      document.querySelectorAll('.genre-filter').forEach(radio => {
+         radio.addEventListener('change', function () {
+            // Remover estilo activo de todos los labels
+            document.querySelectorAll('.genre-filter + label').forEach(label => {
+               label.style.background = '';
+               label.style.color = '';
+               label.classList.remove('bg-purple-600');
+               label.classList.add('bg-gray-700');
+            });
+
+            // Aplicar estilo activo al seleccionado
+            if (this.checked) {
+               const label = this.nextElementSibling;
+               label.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+               label.style.color = 'white';
+               label.classList.remove('bg-gray-700');
+               label.classList.add('bg-purple-600');
+            }
+
+            applyFilters();
+         });
+      });
+
+      // Inicialización
+      document.addEventListener('DOMContentLoaded', () => {
+         // Marcar "Todos" como activo por defecto
+         const allGenreLabel = document.querySelector('.genre-filter[value="all"] + label');
+         if (allGenreLabel) {
+            allGenreLabel.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+            allGenreLabel.style.color = 'white';
+            allGenreLabel.classList.remove('bg-gray-700');
+            allGenreLabel.classList.add('bg-purple-600');
+         }
+
+         applyFilters();
+      });
+
+      // Efecto de carga inicial
+      window.addEventListener('load', () => {
+         setTimeout(() => {
+            renderGames();
+         }, 100);
+      });
+   </script>
+</body>
+
+</html>
